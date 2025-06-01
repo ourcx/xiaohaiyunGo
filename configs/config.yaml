@@ -1,0 +1,19 @@
+app:
+  port: 8085
+database:
+  driver: mysql
+  source: root:Root_123@tcp(47.112.109.9:3306)/xiaohaiyun?charset=utf8mb4&parseTime=True&loc=Local
+
+redis:
+  host: "47.112.109.9:6379"
+  password: "Root_123"
+  db: 0
+  db1: 1
+  pool_size: 10
+
+email:
+  SMTP_HOST: "smtp.qq.com"   # SMTP服务器地址
+  SMTP_PORT: 465             # QQ邮箱SSL端口（25端口已废弃）
+  SMTP_USER: "3277975910@qq.com"
+  SMTP_PASSWORD: "syafuhdndrnpdbdi"
+  #这个是发邮箱的东西

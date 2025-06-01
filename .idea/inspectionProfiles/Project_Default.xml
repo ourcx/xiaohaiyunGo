@@ -1,0 +1,15 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="GoDfaErrorMayBeNotNil" enabled="true" level="WARNING" enabled_by_default="true">
+      <functions>
+        <function importPath="github.com/google/uuid" name="FromBytes" />
+      </functions>
+      <methods>
+        <method importPath="xiaohaiyun/internal/repositories" receiver="*UserRepository" name="GetUserByEmail" />
+        <method importPath="xiaohaiyun/internal/repositories" receiver="*UserRepository" name="GetTableByEmail" />
+        <method importPath="github.com/tencentyun/cos-go-sdk-v5" receiver="*ObjectService" name="Head" />
+      </methods>
+    </inspection_tool>
+  </profile>
+</component>

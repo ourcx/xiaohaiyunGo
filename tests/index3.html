@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html >
+<head>
+    <meta charset="UTF-8">
+    <title>WebSocket Chat3</title>
+</head>
+<body>
+<input type="text" id="username" placeholder="用户名"><br>
+<input type="text" id="message" placeholder="输入消息">
+<button onclick="sendMessage()">发送</button>
+<div id="output"></div>
+
+<script>
+    const ws = new WebSocket("ws://localhost:8085/chat/ws");
+    const output = document.getElementById("output");
+
+    // 接收服务器消息
+    ws.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+        output.innerHTML += `<p><b>${msg.username}:</b> ${msg.text}</p>`;
+    };
+
+    // 发送消息到服务器
+    function sendMessage() {
+        const username = document.getElementById("username").value;
+        const message = document.getElementById("message").value;
+        ws.send(JSON.stringify({ username,text: message,jwt:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDY4ODc3MzUsImlhdCI6MTc0NjYxNDEzNSwiaXNzIjoieGlhb2hhaSIsInVzZXIiOnsiSUQiOiIxNyIsImVtYWlsIjoiMzI3Nzk3NTk3MUAxMzYuY29tIiwibmFtZSI6IkFsaWNlIn19.E2c4Me48prhR4-VMvalqcaTdK6rvJQdjQ-J459SUOZg",type:"message"}));
+    }
+
+   setTimeout(()=>{
+       let name="xiaohai"
+       let meg=""
+       ws.send(JSON.stringify({ username:name,text: meg,jwt:"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3NDY4ODc3MzUsImlhdCI6MTc0NjYxNDEzNSwiaXNzIjoieGlhb2hhaSIsInVzZXIiOnsiSUQiOiIxNyIsImVtYWlsIjoiMzI3Nzk3NTk3MUAxMzYuY29tIiwibmFtZSI6IkFsaWNlIn19.E2c4Me48prhR4-VMvalqcaTdK6rvJQdjQ-J459SUOZg",type:"online"}));
+   },5000)
+
+
+</script>
+</body>
+</html>
