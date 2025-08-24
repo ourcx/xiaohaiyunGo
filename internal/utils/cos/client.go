@@ -20,7 +20,7 @@ func Client() *cos.Client {
 	}
 	//检查环境变量
 
-	u, _ := url.Parse("https://xiaohaiyun-1331891188.cos.ap-guangzhou.myqcloud.com")
+	u, _ := url.Parse("http://cdn.norubias.top")
 	b := &cos.BaseURL{BucketURL: u}
 	client := cos.NewClient(b, &http.Client{
 		Transport: &cos.AuthorizationTransport{

@@ -14,6 +14,7 @@ import (
 	"xiaohaiyun/internal/api/file/Tag"
 	"xiaohaiyun/internal/api/file/share"
 	"xiaohaiyun/internal/api/file/share/Manage"
+	"xiaohaiyun/internal/api/pay"
 	"xiaohaiyun/internal/api/userData"
 	"xiaohaiyun/internal/api/userData/relationship"
 	"xiaohaiyun/internal/api/userData/userFound"
@@ -41,7 +42,7 @@ func SetupRoutes(r *gin.Engine, engine *xorm.Engine) {
 		user.POST("/parseJwt", api.JwtStatus)
 		user.POST("/sendEmail", reqEmailSend.SendReqEmail)
 		user.POST("/search", relationship.SearchUser)
-
+		user.POST("/checked", share.Checked)
 	}
 
 	pwd := r.Group("/pwd")
@@ -108,7 +109,7 @@ func SetupRoutes(r *gin.Engine, engine *xorm.Engine) {
 		UserController := controllers.NewUserController(UserService)
 		files.GET("/", UserController.GetUsers)
 		files.GET("/init", file.Init)
-		files.GET("/ListFile", cosFile.GenerateSecureUploadURL)
+		files.POST("/Url", cosFile.GenerateSecureUploadURL)
 		files.GET("treeFIle", file.TreeFile)
 		files.POST("/ReplayFile", file.ReplayList)
 		files.POST("/removeFIleName", file.RemoveFile)
@@ -129,6 +130,7 @@ func SetupRoutes(r *gin.Engine, engine *xorm.Engine) {
 		files.PUT("/getTag", Tag.GetTag)
 		files.PUT("deleteTag", Tag.DeleteTag)
 		files.POST("/HTML", file.HTML)
+		files.POST("/exist", file.Exist)
 	}
 	outShare := r.Group("/outShare")
 	{
@@ -137,6 +139,7 @@ func SetupRoutes(r *gin.Engine, engine *xorm.Engine) {
 		outShare.GET("/", UserController.GetUsers)
 		outShare.POST("/urlStatus", share.UrlStatus)
 		outShare.PUT("/access", share.AccessVisit)
+		outShare.POST("/extract", share.Extract)
 		//传前端query的参数，可以进行校验，如果检验不通过，则通知前端退出当前状态
 
 	}
@@ -149,9 +152,11 @@ func SetupRoutes(r *gin.Engine, engine *xorm.Engine) {
 		shareUrl.POST("/setShareData", share.SetShare)
 		shareUrl.POST("/getShareData", share.GetShare)
 		shareUrl.POST("/create", share.CreateUrl)
+		//shareUrl.POST("/checked", share.Checked)
+		shareUrl.POST("/deleteShare", share.DeleteShare)
 		shareUrl.POST("/getUrl", share.GetUrl)
-		shareUrl.POST("/checked", share.Checked)
-		shareUrl.DELETE("/deleteShare", share.DeleteShare)
+		shareUrl.POST("/download", share.DownLoadShare)
+
 	}
 	email := r.Group("/email")
 	email.Use(userAuth.LoggerMiddleware, userAuth.AuthMiddleware)
@@ -193,5 +198,14 @@ func SetupRoutes(r *gin.Engine, engine *xorm.Engine) {
 		trash.GET("/TrashList", recyclebin.TrashList)
 		trash.PUT("/RecoverFile", recyclebin.RecoverTrashFile)
 		trash.PUT("/deleteTrash", recyclebin.DeleteTrashList)
+	}
+	pays := r.Group("/pay")
+	pays.Use(userAuth.LoggerMiddleware, userAuth.AuthMiddleware)
+	{
+		UserService := services.NewUserService(engine)
+		UserController := controllers.NewUserController(UserService)
+		pays.GET("/", UserController.GetUsers)
+		pays.POST("PayMember", pay.AliPay)
+		pays.GET("/GetMember", pay.GetPayment)
 	}
 }

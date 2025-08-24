@@ -117,6 +117,7 @@ func PostProfiles(c *gin.Context) {
 	//执行插入操作
 	if has {
 		_, err = app.Engine.Table("user_profiles").Where("user_id=?", table.ID).Update(&profiles)
+		_, err = app.Engine.Table("url_share").Where("user_id=?", table.ID).Update(&profiles)
 		if err != nil {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": err.Error(), "提示": "更新失败"})
 			return

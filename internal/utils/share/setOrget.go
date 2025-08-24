@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"strconv"
 	"sync"
 	"time"
 	"xiaohaiyun/internal/app"
@@ -11,10 +12,26 @@ import (
 	cosFile "xiaohaiyun/internal/utils/cos"
 )
 
-func XData(c *gin.Context, dataJson share.UrlDataJSONString, binaryID []byte, oneID string) {
+func XData(c *gin.Context, dataJson share.UrlDataJSONString, binaryID []byte, oneID string, userId string) {
 	// 开启事务
 	// 获取用户ID
-	userID := cosFile.GetID(c).ID
+	var userID int
+	if userId != "" {
+		num, err := strconv.Atoi(userId)
+		if err != nil {
+			// 处理错误
+			c.JSON(500, gin.H{
+				"code": 500,
+				"msg":  "字符串转化失败: " + err.Error(),
+				"data": nil,
+			})
+			return
+		}
+		userID = num
+	} else {
+		userID = cosFile.GetID(c).ID
+	}
+
 	session := app.Engine.NewSession()
 	defer session.Close()
 	if err := session.Begin(); err != nil {
@@ -130,6 +147,7 @@ func XData(c *gin.Context, dataJson share.UrlDataJSONString, binaryID []byte, on
 				if err := CopyOptions(it, bid); err != nil {
 					fmt.Printf("复制失败 %s: %v\n", it, err)
 				}
+				return
 			}(item, uuidObj.String()) // 传参给匿名函数
 		}
 		wg.Wait() // 等待所有任务完成
@@ -158,6 +176,7 @@ func XData(c *gin.Context, dataJson share.UrlDataJSONString, binaryID []byte, on
 
 	// 清除敏感信息
 	urlData.Password = ""
+	uuidObj, err := uuid.FromBytes(binaryID)
 
 	c.JSON(200, gin.H{
 		"code": 200,
@@ -173,7 +192,7 @@ func XData(c *gin.Context, dataJson share.UrlDataJSONString, binaryID []byte, on
 			"signature":   urlShare.Signature,
 			"email":       urlShare.Email,
 			"avatar":      urlShare.Avatar,
-			"ond_id":      urlData.OneId,
+			"ond_id":      uuidObj.String(),
 		},
 		//这是一些总的信息，还要加上一点其他的生成短链才行
 	})

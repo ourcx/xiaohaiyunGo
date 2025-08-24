@@ -6,7 +6,10 @@ import "sync"
 
 // 初始化敏感词切片
 var SensitiveWords = []string{
-	"非法捕鱼",
+	"script",
+	"insert",
+	"delete",
+	"update",
 }
 
 // TrieV1Node 表示TrieV1树的节点

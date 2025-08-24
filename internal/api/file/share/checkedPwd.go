@@ -34,6 +34,7 @@ func Checked(c *gin.Context) {
 	if data.Password == dataJson.Password {
 		c.JSON(200, gin.H{
 			"code": 200,
+			"data": data,
 		})
 		return
 	} else {

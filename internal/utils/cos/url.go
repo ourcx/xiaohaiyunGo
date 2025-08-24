@@ -12,18 +12,23 @@ import (
 	"time"
 	"xiaohaiyun/internal/app"
 	"xiaohaiyun/internal/models"
+	modelsCOS "xiaohaiyun/internal/models/cos"
 	"xiaohaiyun/internal/repositories"
 	"xiaohaiyun/internal/utils"
 )
 
 // GenerateSecureUploadURL 生成临时密钥和预签名URL给前端
 func GenerateSecureUploadURL(c *gin.Context) {
+	filename := modelsCOS.FileName{}
 	//获取用户的JWT信息
 	userID := GetID(c).ID
+	c.ShouldBind(&filename)
+	//阻止多次请求？
+	
 	// ===================== 2. 配置COS客户端 =====================
 	secretID := os.Getenv("COS_MAIN_SECRET_ID")   // 从环境变量读取
 	secretKey := os.Getenv("COS_MAIN_SECRET_KEY") // 从环境变量读取
-	bucketURL := "https://xiaohaiyun-1331891188.cos.ap-guangzhou.myqcloud.com"
+	bucketURL := "http://cdn.norubias.top"
 
 	u, err := url.Parse(bucketURL)
 	if err != nil {
@@ -39,18 +44,15 @@ func GenerateSecureUploadURL(c *gin.Context) {
 		},
 	})
 
-	// ===================== 3. 生成唯一对象键 =====================
-	objectKey := fmt.Sprintf("users/%d/*", userID) // 路径如 users/14/uuid
-
-	// ===================== 4. 生成预签名URL =====================
-	// 有效时间15分钟，PUT方法
+	objectKey := fmt.Sprintf("users/%d/%s", userID, filename.FileName)
+	fmt.Println(objectKey)
 	presignedURL, err := client.Object.GetPresignedURL(
 		context.Background(),
 		http.MethodPut,
 		objectKey,
 		secretID,
 		secretKey,
-		15*time.Minute,
+		5*time.Minute,
 		nil, // 可设置Content-Type等参数
 	)
 	if err != nil {
@@ -58,7 +60,6 @@ func GenerateSecureUploadURL(c *gin.Context) {
 		return
 	}
 
-	// ===================== 5. 返回结果 =====================
 	c.JSON(http.StatusOK, gin.H{
 		"code": 200,
 		"msg":  "success",
@@ -69,20 +70,6 @@ func GenerateSecureUploadURL(c *gin.Context) {
 		},
 	})
 }
-
-//async function uploadFile(file) {
-//    const response = await fetch(generatedPresignedURL, {
-//        method: 'PUT',
-//        body: file,
-//        headers: {
-//            'Content-Type': file.type // 可根据需要设置
-//        }
-//    });
-//    if (response.ok) {
-//        console.log('上传成功');
-//    }
-//}
-//前端使用put来上传文件
 
 func GetID(c *gin.Context) *models.UserReq {
 	claimsValue, exists := c.Get("processed_data")

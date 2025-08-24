@@ -46,12 +46,25 @@ type UrlDataJSONString struct {
 }
 
 type GetUrlDataJSONString struct {
-	OneId string `xorm:"VARCHAR(16) 'one_id'" json:"one_id"`
+	OneId  string `xorm:"VARCHAR(16) 'one_id'" json:"one_id"`
+	UserId string `xorm:"VARCHAR(16) 'user_id'" json:"userId"`
 }
 
 type CheckUrlDataJSONString struct {
 	OneId    string `xorm:"VARCHAR(16) 'one_id'" json:"one_id"`
 	Password string `xorm:"VARCHAR(255) 'password'" json:"password"`
+}
+
+type DownLoadUrlShare struct {
+	FileName string `xorm:"VARCHAR(255) 'filename'"`
+	UUID     string `xorm:"VARCHAR(255) 'uuid'"`
+}
+
+type ExtractShareFiles struct {
+	OneId    string `xorm:"BINARY(16) 'one_id'"`
+	Pwd      string `xorm:"VARCHAR(255) 'pwd'"`
+	Email    string `xorm:"VARCHAR(255) 'email'"`
+	FileName string `xorm:"VARCHAR(255) 'file_name'"`
 }
 
 func (f *UrlData) TableName() string {

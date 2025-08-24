@@ -4,7 +4,9 @@ import (
 	"context"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	opts "github.com/tencentyun/cos-go-sdk-v5"
 	"net/http"
+	"net/url"
 	"os"
 	"strconv"
 	"time"
@@ -27,7 +29,15 @@ func Describe(c *gin.Context) {
 		return
 	}
 
-	fmt.Println(filename)
+	opt := &opts.PresignedURLOptions{
+		Query: &url.Values{
+			"response-content-disposition": []string{
+				"attachment; filename=\"" + filename.FileName + "\"",
+			},
+			// 添加这行强制二进制流类型
+			"response-content-type": []string{"application/octet-stream"},
+		},
+	}
 
 	objectKey := "users/" + strconv.Itoa(userID) + "/" + filename.FileName
 	presignedURL, err := client.Object.GetPresignedURL(
@@ -37,7 +47,7 @@ func Describe(c *gin.Context) {
 		os.Getenv("COS_MAIN_SECRET_ID"),
 		os.Getenv("COS_MAIN_SECRET_KEY"),
 		10*time.Minute,
-		nil,
+		opt,
 	)
 	if err != nil {
 		c.JSON(500, gin.H{

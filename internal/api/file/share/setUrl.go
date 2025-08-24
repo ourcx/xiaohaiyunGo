@@ -20,5 +20,5 @@ func CreateUrl(c *gin.Context) {
 		})
 		return
 	}
-	share2.XData(c, dataJson, binaryID, "")
+	share2.XData(c, dataJson, binaryID, "", "")
 }

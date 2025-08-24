@@ -83,7 +83,11 @@ func HandleWebSocket(c *gin.Context) {
 			}
 		}
 		log.Printf("websocket心跳停止")
-		err := ws.Close()
+		clientsMu.Lock()
+		delete(clients, ws)
+		clientsMu.Unlock()
+		err = ws.Close()
+		fmt.Println(clients)
 		if err != nil {
 		}
 	}(ws)

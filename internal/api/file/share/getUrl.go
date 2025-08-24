@@ -18,5 +18,5 @@ func GetUrl(c *gin.Context) {
 		})
 		return
 	}
-	share2.XData(c, dataJson, nil, OneID.OneId)
+	share2.XData(c, dataJson, nil, OneID.OneId, OneID.UserId)
 }
