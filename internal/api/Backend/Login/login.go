@@ -13,6 +13,17 @@ type ListFolder struct {
 	Password string `json:"password"`
 }
 
+// Login GetUser godoc
+// @Summary 获取用户信息
+// @Description 根据用户ID获取用户详细信息
+// @Tags users
+// @Accept json
+// @Produce json
+// @Param id path int true "用户ID"
+// @Success 200 {object} models.BackendLogin
+// @Failure 400 {object} map[string]interface{}
+// @Failure 404 {object} map[string]interface{}
+// @Router /users/{id} [get]
 func Login(c *gin.Context) {
 	//这个就是一个简单的后台用户验证
 	//解析token

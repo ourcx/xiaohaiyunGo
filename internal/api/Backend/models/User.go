@@ -4,7 +4,7 @@ import "time"
 
 type BackendLogin struct {
 	ID        int       `gorm:"primaryKey;autoIncrement" json:"id"`
-	UserID    int       `gorm:"not null" json:"user_id"`
+	UserID    int64     `gorm:"not null;uniqueIndex" json:"user_id"`
 	Username  string    `gorm:"size:50;not null;unique" json:"username"`
 	Password  string    `gorm:"size:255;not null" json:"-"`
 	Email     string    `gorm:"size:100" json:"email,omitempty"`
