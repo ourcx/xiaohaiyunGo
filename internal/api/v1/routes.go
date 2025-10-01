@@ -5,7 +5,9 @@ import (
 	"github.com/go-xorm/xorm"
 	"xiaohaiyun/internal/api"
 	"xiaohaiyun/internal/api/Aichat"
+	"xiaohaiyun/internal/api/Backend/File"
 	"xiaohaiyun/internal/api/Backend/Login"
+	"xiaohaiyun/internal/api/Backend/Share"
 	"xiaohaiyun/internal/api/advice"
 	"xiaohaiyun/internal/api/chat"
 	"xiaohaiyun/internal/api/file"
@@ -216,5 +218,20 @@ func SetupRoutes(r *gin.Engine, engine *xorm.Engine) {
 		backend.GET("/", UserController.GetUsers)
 		backend.POST("/login", Login.Login)
 		backend.POST("/req", Login.Req)
+	}
+	backendFile := r.Group("/backendFile")
+	{
+		UserService := services.NewUserService(engine)
+		UserController := controllers.NewUserController(UserService)
+		backendFile.GET("/", UserController.GetUsers)
+		backendFile.GET("/AllFile", File.AllFile)
+		backendFile.POST("/addFile", File.AddFile)
+	}
+	backendShare := r.Group("/backendShare")
+	{
+		UserService := services.NewUserService(engine)
+		UserController := controllers.NewUserController(UserService)
+		backendShare.GET("/", UserController.GetUsers)
+		backendShare.GET("/shareLin", Share.Links)
 	}
 }
